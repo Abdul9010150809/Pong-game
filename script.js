@@ -1,178 +1,123 @@
 const canvas = document.getElementById("pongCanvas");
 const ctx = canvas.getContext("2d");
+const playerScoreEl = document.getElementById("playerScore");
+const aiScoreEl = document.getElementById("aiScore");
+const themeToggle = document.getElementById("themeToggle");
+const resetBtn = document.getElementById("resetBtn");
+const pauseBtn = document.getElementById("pauseBtn");
+const speedSelect = document.getElementById("speedSelect");
+const muteBtn = document.getElementById("muteBtn");
+const startOverlay = document.getElementById("startOverlay");
+const startBtn = document.getElementById("startBtn");
 
-let WIDTH = canvas.width;
-let HEIGHT = canvas.height;
+let playerScore = 0, aiScore = 0;
+const paddleWidth = 10, paddleHeight = 100;
+let playerY = canvas.height / 2 - paddleHeight / 2;
+let aiY = canvas.height / 2 - paddleHeight / 2;
+let ballX = canvas.width / 2, ballY = canvas.height / 2;
+let ballRadius = 8;
+let baseSpeed = parseInt(speedSelect.value);
+let ballSpeedX = baseSpeed, ballSpeedY = 4;
+let isPaused = true, started = false, muted = false;
 
-const PADDLE_WIDTH = 15;
-let PADDLE_HEIGHT = 100;
-const PADDLE_MARGIN = 20;
-let aiPaddleHeight = PADDLE_HEIGHT;
-let PADDLE_SPEED = 8;
+const bounceSound = new Audio("https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg");
+const scoreSound = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
+[bounceSound, scoreSound].forEach(a => { a.preload = "auto"; a.volume = .6 });
 
-const BALL_SIZE = 14;
-let ballSpeed = 8;
-const BALL_SPEED_INCREMENT = 0.6;
-const MAX_SCORE = 10;
-
-let playerScore = 0;
-let aiScore = 0;
-
-let playerY = HEIGHT / 2 - PADDLE_HEIGHT / 2;
-let aiY = HEIGHT / 2 - PADDLE_HEIGHT / 2;
-
-let ballX = WIDTH / 2 - BALL_SIZE / 2;
-let ballY = HEIGHT / 2 - BALL_SIZE / 2;
-let ballVX = ballSpeed * (Math.random() > 0.5 ? 1 : -1);
-let ballVY = ballSpeed * (Math.random() * 2 - 1);
-
-let upPressed = false;
-let downPressed = false;
-
-function resizeCanvas() {
-  canvas.width = window.innerWidth * 0.85;
-  canvas.height = window.innerHeight * 0.85;
-  WIDTH = canvas.width;
-  HEIGHT = canvas.height;
-  playerY = HEIGHT / 2 - PADDLE_HEIGHT / 2;
-  aiY = HEIGHT / 2 - aiPaddleHeight / 2;
-  resetBall(ballVX > 0 ? 1 : -1);
+function draw() {
+  if (!started || isPaused) { requestAnimationFrame(draw); return; }
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.beginPath();
+  ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
+  ctx.fillStyle = getComputedStyle(document.body).getPropertyValue("--accent");
+  ctx.fill();
+  ctx.fillStyle = getComputedStyle(document.body).getPropertyValue("--text");
+  ctx.fillRect(10, playerY, paddleWidth, paddleHeight);
+  ctx.fillRect(canvas.width - paddleWidth - 10, aiY, paddleWidth, paddleHeight);
+  ballX += ballSpeedX;
+  ballY += ballSpeedY;
+  if (ballY - ballRadius < 0 || ballY + ballRadius > canvas.height) {
+    ballSpeedY *= -1;
+    if (!muted) bounceSound.currentTime = 0, bounceSound.play();
+  }
+  if (ballX - ballRadius < 20 && ballY > playerY && ballY < playerY + paddleHeight) {
+    ballSpeedX *= -1;
+    if (!muted) bounceSound.currentTime = 0, bounceSound.play();
+  }
+  if (ballX + ballRadius > canvas.width - 20 && ballY > aiY && ballY < aiY + paddleHeight) {
+    ballSpeedX *= -1;
+    if (!muted) bounceSound.currentTime = 0, bounceSound.play();
+  }
+  aiY += (ballY - (aiY + paddleHeight / 2)) * 0.09;
+  if (ballX < 0) {
+    aiScore++;
+    if (!muted) scoreSound.currentTime = 0, scoreSound.play();
+    resetBall();
+  } else if (ballX > canvas.width) {
+    playerScore++;
+    if (!muted) scoreSound.currentTime = 0, scoreSound.play();
+    resetBall();
+  }
+  playerScoreEl.textContent = playerScore;
+  aiScoreEl.textContent = aiScore;
+  requestAnimationFrame(draw);
 }
-window.addEventListener("resize", resizeCanvas);
+
+function resetBall() {
+  baseSpeed = parseInt(speedSelect.value);
+  ballX = canvas.width / 2;
+  ballY = canvas.height / 2;
+  ballSpeedX = (Math.random() > 0.5 ? 1 : -1) * baseSpeed;
+  ballSpeedY = (Math.random() > 0.5 ? 1 : -1) * 4;
+}
 
 canvas.addEventListener("mousemove", (e) => {
   const rect = canvas.getBoundingClientRect();
-  const mouseY = e.clientY - rect.top;
-  playerY += (mouseY - (playerY + PADDLE_HEIGHT / 2)) * 0.3;
-  playerY = Math.max(0, Math.min(HEIGHT - PADDLE_HEIGHT, playerY));
+  playerY = e.clientY - rect.top - paddleHeight / 2;
+});
+
+themeToggle.addEventListener("click", () => {
+  document.body.classList.toggle("dark");
+  themeToggle.textContent = document.body.classList.contains("dark") ? "☀️ Light Mode" : "🌙 Dark Mode";
+});
+
+resetBtn.addEventListener("click", () => {
+  playerScore = 0;
+  aiScore = 0;
+  playerScoreEl.textContent = "0";
+  aiScoreEl.textContent = "0";
+  resetBall();
+});
+
+pauseBtn.addEventListener("click", () => {
+  if (!started) return;
+  isPaused = !isPaused;
+  pauseBtn.textContent = isPaused ? "▶ Play" : "⏸ Pause";
+});
+
+speedSelect.addEventListener("change", () => {
+  const s = parseInt(speedSelect.value);
+  ballSpeedX = s * (ballSpeedX >= 0 ? 1 : -1);
+});
+
+muteBtn.addEventListener("click", () => {
+  muted = !muted;
+  muteBtn.textContent = muted ? "🔇 Muted" : "🔊 Sound";
+});
+
+startBtn.addEventListener("click", () => {
+  started = true;
+  isPaused = false;
+  startOverlay.classList.add("hidden");
+  resetBall();
 });
 
 document.addEventListener("keydown", (e) => {
-  if (e.key === "w" || e.key === "ArrowUp") upPressed = true;
-  if (e.key === "s" || e.key === "ArrowDown") downPressed = true;
+  if (e.key === "Escape") {
+    if (!started) return;
+    isPaused = !isPaused;
+    pauseBtn.textContent = isPaused ? "▶ Play" : "⏸ Pause";
+  }
 });
-document.addEventListener("keyup", (e) => {
-  if (e.key === "w" || e.key === "ArrowUp") upPressed = false;
-  if (e.key === "s" || e.key === "ArrowDown") downPressed = false;
-});
 
-function gameLoop() {
-  update();
-  draw();
-  requestAnimationFrame(gameLoop);
-}
-
-function update() {
-  if (upPressed) playerY -= PADDLE_SPEED;
-  if (downPressed) playerY += PADDLE_SPEED;
-  playerY = Math.max(0, Math.min(HEIGHT - PADDLE_HEIGHT, playerY));
-
-  ballX += ballVX;
-  ballY += ballVY;
-
-  if (ballY <= 0) {
-    ballY = 0;
-    ballVY *= -1;
-  }
-  if (ballY + BALL_SIZE >= HEIGHT) {
-    ballY = HEIGHT - BALL_SIZE;
-    ballVY *= -1;
-  }
-
-  if (
-    ballX <= PADDLE_MARGIN + PADDLE_WIDTH &&
-    ballY + BALL_SIZE >= playerY &&
-    ballY <= playerY + PADDLE_HEIGHT
-  ) {
-    ballX = PADDLE_MARGIN + PADDLE_WIDTH;
-    ballVX *= -1;
-    let hitPos = (ballY + BALL_SIZE / 2) - (playerY + PADDLE_HEIGHT / 2);
-    ballVY = hitPos * 0.28 + (Math.random() - 0.5) * 2;
-    ballSpeed += BALL_SPEED_INCREMENT;
-    ballVX = Math.sign(ballVX) * ballSpeed;
-    ballVY = Math.sign(ballVY) * Math.min(Math.abs(ballVY), ballSpeed * 2);
-  }
-
-  if (
-    ballX + BALL_SIZE >= WIDTH - PADDLE_MARGIN - PADDLE_WIDTH &&
-    ballY + BALL_SIZE >= aiY &&
-    ballY <= aiY + aiPaddleHeight
-  ) {
-    ballX = WIDTH - PADDLE_MARGIN - PADDLE_WIDTH - BALL_SIZE;
-    ballVX *= -1;
-    let hitPos = (ballY + BALL_SIZE / 2) - (aiY + aiPaddleHeight / 2);
-    ballVY = hitPos * 0.28 + (Math.random() - 0.5) * 2;
-    ballSpeed += BALL_SPEED_INCREMENT;
-    ballVX = Math.sign(ballVX) * ballSpeed;
-    ballVY = Math.sign(ballVY) * Math.min(Math.abs(ballVY), ballSpeed * 2);
-  }
-
-  if (ballX < 0) {
-    aiScore++;
-    aiPaddleHeight = Math.max(40, aiPaddleHeight - 10);
-    if (aiScore >= MAX_SCORE) {
-      setTimeout(() => resetGame("AI"), 500);
-      return;
-    }
-    resetBall(-1);
-  } else if (ballX + BALL_SIZE > WIDTH) {
-    playerScore++;
-    if (playerScore >= MAX_SCORE) {
-      setTimeout(() => resetGame("Player"), 500);
-      return;
-    }
-    resetBall(1);
-  }
-
-  let aiCenter = aiY + aiPaddleHeight / 2;
-  let ballCenter = ballY + BALL_SIZE / 2;
-  let aiMove = Math.min(PADDLE_SPEED, Math.abs(ballCenter - aiCenter));
-  if (aiCenter < ballCenter - 10) aiY += aiMove;
-  else if (aiCenter > ballCenter + 10) aiY -= aiMove;
-  aiY = Math.max(0, Math.min(HEIGHT - aiPaddleHeight, aiY));
-
-  document.getElementById("playerScore").textContent = playerScore;
-  document.getElementById("aiScore").textContent = aiScore;
-}
-
-function resetBall(direction) {
-  ballX = WIDTH / 2 - BALL_SIZE / 2;
-  ballY = HEIGHT / 2 - BALL_SIZE / 2;
-  ballSpeed = 8;
-  ballVX = ballSpeed * direction;
-  ballVY = ballSpeed * (Math.random() * 2 - 1);
-}
-
-function resetGame(winner) {
-  playerScore = 0;
-  aiScore = 0;
-  aiPaddleHeight = PADDLE_HEIGHT;
-  resizeCanvas();
-  let message = winner + " wins! Game resets.";
-  ctx.fillStyle = "#fff";
-  ctx.font = "32px Arial";
-  ctx.fillText(message, WIDTH / 2 - 140, HEIGHT / 2);
-}
-
-function draw() {
-  ctx.clearRect(0, 0, WIDTH, HEIGHT);
-
-  ctx.strokeStyle = "#fff";
-  ctx.setLineDash([8, 14]);
-  ctx.beginPath();
-  ctx.moveTo(WIDTH / 2, 0);
-  ctx.lineTo(WIDTH / 2, HEIGHT);
-  ctx.stroke();
-  ctx.setLineDash([]);
-
-  ctx.fillStyle = "#fff";
-  ctx.fillRect(PADDLE_MARGIN, playerY, PADDLE_WIDTH, PADDLE_HEIGHT);
-  ctx.fillRect(WIDTH - PADDLE_MARGIN - PADDLE_WIDTH, aiY, PADDLE_WIDTH, aiPaddleHeight);
-
-  ctx.beginPath();
-  ctx.arc(ballX + BALL_SIZE / 2, ballY + BALL_SIZE / 2, BALL_SIZE / 2, 0, Math.PI * 2);
-  ctx.fill();
-}
-
-resizeCanvas();
-gameLoop();
+draw();

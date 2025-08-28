@@ -1,66 +1,131 @@
-# Advanced Pong Game
+# Pong Game
 
-A modern, feature-rich Pong game built with pure **HTML**, **CSS**, and **JavaScript**. The left paddle is controlled by the player (mouse or keyboard), and the right paddle is controlled by a challenging AI. Includes collision detection, scorekeeping, speed/difficulty scaling, and responsive design.
+A modern, feature-rich Pong game built with pure HTML, CSS, and JavaScript. The left paddle is controlled by the player (mouse or keyboard), and the right paddle is controlled by a challenging AI. Includes collision detection, scorekeeping, speed/difficulty scaling, theme switching, and responsive design.
 
 ## 🎮 Features
 
-- **Mouse & Keyboard Controls** (W/S or ↑/↓ for player paddle)
-- **Responsive Canvas** (adapts to window size)
-- **Dynamic Ball Speed** (increases after each hit)
-- **AI Difficulty Scaling** (AI paddle shrinks after each score)
-- **Scoreboard** and **Win Detection**
-- **Smooth Animations & Game Loop**
-- **Deploy-ready** (static hosting, Vercel, Netlify, GitHub Pages)
-- **No external dependencies**
+- Mouse & Keyboard Controls (W/S or ↑/↓ for player paddle)
+
+- Responsive Canvas (adapts to window size)
+
+- Dynamic Ball Speed (increases after each hit)
+
+- AI Difficulty Scaling (AI paddle shrinks after each score)
+
+- Scoreboard and Win Detection
+
+- Theme Switcher (Light/Dark mode toggle)
+
+- Smooth Animations & Game Loop
+
+- Deploy-ready (static hosting, Vercel, Netlify, GitHub Pages)
+
+- No external dependencies
 
 ## 🗂️ Project Structure
-
 ```
 pong-advanced/
 ├── index.html       # Main HTML file
 ├── style.css        # Styling
 ├── script.js        # Game logic
 ├── README.md        # Documentation (this file)
-└── deploy.sh        # Optional: quick deploy script (Vercel)
+├── output/          # Gameplay assets (screenshots & demo video)
+│   ├── img1.png
+│   ├── img2.png
+│   ├── img3.png
+│   ├── img4.png
+│   └── Pong.mp4
 ```
 
-## 🚀 How To Run Locally
+## 🚀 Live Demo
 
-1. **Clone or Download** this repository.
-2. Open `index.html` in your web browser.
+Once deployed via GitHub Pages, access your game at:
+```
+https://<your-github-username>.github.io/<repository-name>/
+```
 
-## 🕹️ Controls
+🔗 Example:
+[https://abdul9010150809.github.io/Pong-game/]
+(https://abdul9010150809.github.io/Pong-game/)
 
-- **Mouse**: Move paddle by hovering over the game.
-- **Keyboard**: Use `W/S` or `↑/↓` keys to move the left paddle.
+## 🛠️ Getting Started
 
-## 🏓 Gameplay
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/yourusername/Pong-game.git
+   cd Pong-game
+   ```
 
-- First to **10 points** wins.
-- Ball gets faster after each paddle hit.
-- AI paddle shrinks after scoring, making it harder for the AI.
-- The game automatically resets after a winner is declared.
+2. **Run the Game**
+   Just open `index.html` in any modern browser or use Live Server in VSCode.
 
-## 🌐 Deployment
+3. **Play**
+   - Play
 
-### GitHub Pages
+   - Move the left paddle with mouse hover or W/S (↑/↓) keys.
 
-1. Push all files to a public GitHub repository.
-2. Go to **Settings > Pages**.
-3. Set **Source** to your main branch (e.g., `main`) and `/ (root)` folder.
-4. Save and access your game at `https://<username>.github.io/<repo>/`.
+   - First to 10 points wins.
 
-## 📁 File Details
+   - Observe ball speed increase after hits and AI paddle shrinking after AI scores.
 
-- `index.html`: Sets up the canvas and scoreboard.
-- `style.css`: Handles layout, colors, and positioning.
-- `script.js`: Contains all game logic, controls, AI, animation, and collision detection.
-- `deploy.sh`: Shell script for Vercel deployment (optional).
+   - See the result, score, and try theme toggle.
 
-## 💡 Customization
+---
 
-- Change `MAX_SCORE` in `script.js` to adjust winning score.
-- Tweak paddle/ball sizes or speeds for different gameplay experience.
+## Theme changing
 
+   - Toggle between Light Mode and Dark Mode using the UI button.
 
-## 🙌 Enjoy playing!
+   - Themes affect background, paddles, ball, and scoreboard colors.
+
+## 📸 Screenshots
+
+   - Gameplay
+
+   - Dark Mode
+
+   - AI Paddle Shrink
+
+   - Winner Screen
+
+## 🎥 Demo Video
+
+   - ▶ Watch Gameplay Demo in the output/Pong.mp4 file.
+
+💡 Customization
+
+   - Change MAX_SCORE in script.js to adjust the winning score.
+
+   - Tweak paddle and ball sizes or speeds for different gameplay experiences.
+
+## 🤝 Contributions
+
+Feel free to:
+- Improve UI/UX  
+- Add new themes or animation styles  
+- Add audio or multiplayer support  
+
+Pull requests are welcome! 🎉
+
+---
+
+## 💻 Tech Stack
+
+- HTML5  
+- CSS3  
+- Vanilla JavaScript  
+
+---
+
+## 📬 Contact
+
+Got questions or feedback?
+
+📧 Email: [SHAIK.ABDULSAMMED@outlook.com](mailto:SHAIK.ABDULSAMMED@outlook.com)  
+🔗 GitHub: [@Abdul9010150809](https://github.com/Abdul9010150809)
+
+---
+
+## ❤️ Built with Logic and Passion
+
+> Game on. Learn on. 🎮

@@ -3,14 +3,40 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Simple Pong Game</title>
+  <title>Pong Game</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div id="gameContainer">
+    <div id="startOverlay">
+      <div class="panel">
+        <h1>Pong</h1>
+        <p>Move your paddle with the mouse. Score when the ball passes the AI.</p>
+        <ul class="tips">
+          <li>Theme: toggle 🌙/☀️</li>
+          <li>Pause/Play: ⏸/▶ or press Esc</li>
+          <li>Difficulty: choose speed</li>
+        </ul>
+        <button id="startBtn">▶ Play</button>
+      </div>
+    </div>
+
     <canvas id="pongCanvas" width="800" height="500"></canvas>
+
     <div id="score">
       <span id="playerScore">0</span> : <span id="aiScore">0</span>
+    </div>
+
+    <div id="controls">
+      <button id="themeToggle">🌙 Dark Mode</button>
+      <button id="pauseBtn">⏸ Pause</button>
+      <button id="resetBtn">🔄 Reset Score</button>
+      <select id="speedSelect">
+        <option value="4">Easy</option>
+        <option value="6" selected>Medium</option>
+        <option value="8">Hard</option>
+      </select>
+      <button id="muteBtn">🔊 Sound</button>
     </div>
   </div>
   <script src="script.js"></script>
