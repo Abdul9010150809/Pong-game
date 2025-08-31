@@ -3,7 +3,7 @@ name: Deploy Pong Game
 on:
   push:
     branches:
-      - main   # or master if your default branch is master
+      - main   # change to master if that's your default branch
 
 permissions:
   contents: write   # required for gh-pages deploy
@@ -20,4 +20,4 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./   # keep ./ if index.html is in root, else adjust
+          publish_dir: ./   # keep ./ if index.html is in root, change if in "public" or "docs"
