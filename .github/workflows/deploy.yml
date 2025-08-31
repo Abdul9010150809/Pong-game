@@ -38,4 +38,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./
+          publish_branch: gh-pages     # ✅ force deploys to gh-pages only
+          force_orphan: true           # ✅ creates a clean branch with no PR suggestions
           exclude_assets: '.github,.gitignore'
