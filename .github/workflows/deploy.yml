@@ -1,10 +1,12 @@
-
 name: Deploy Pong Game
 
 on:
   push:
     branches:
       - main   # change if your branch is master
+
+permissions:
+  contents: write   # required for gh-pages deploy
 
 jobs:
   build-deploy:
@@ -21,17 +23,19 @@ jobs:
 
       - name: Validate HTML
         run: |
+          sudo apt-get update
           sudo apt-get install -y tidy
           tidy -qe index.html || true
 
       - name: Validate CSS
-        run: npx stylelint "**/*.css" || true
+        run: npx stylelint "**/*.css" --no-error-on-unmatched-pattern || true
 
       - name: Validate JS
-        run: npx eslint "**/*.js" || true
+        run: npx eslint "**/*.js" --no-error-on-unmatched-pattern || true
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./
+          exclude_assets: '.github,.gitignore'
