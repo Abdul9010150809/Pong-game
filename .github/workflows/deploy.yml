@@ -3,41 +3,21 @@ name: Deploy Pong Game
 on:
   push:
     branches:
-      - main   # change if your branch is master
+      - main   # change to master if that's your default branch
 
 permissions:
   contents: write   # required for gh-pages deploy
 
 jobs:
-  build-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Validate HTML
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y tidy
-          tidy -qe index.html || true
-
-      - name: Validate CSS
-        run: npx stylelint "**/*.css" --no-error-on-unmatched-pattern || true
-
-      - name: Validate JS
-        run: npx eslint "**/*.js" --no-error-on-unmatched-pattern || true
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./
-          publish_branch: gh-pages     # ✅ force deploys to gh-pages only
-          force_orphan: true           # ✅ creates a clean branch with no PR suggestions
-          exclude_assets: '.github,.gitignore'
+          publish_dir: ./   # use ./ if index.html is in root, change if in "public" or "docs"
